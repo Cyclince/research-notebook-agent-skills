@@ -1,0 +1,8 @@
+# Python 3.11+; only needed to execute and validate the teaching notebook.
+numpy>=1.26,<3
+pandas>=2.2,<4
+matplotlib>=3.8,<4
+nbformat>=5.10,<6
+nbclient>=0.10,<0.12
+ipykernel>=6.29,<8
+PyYAML>=6,<7

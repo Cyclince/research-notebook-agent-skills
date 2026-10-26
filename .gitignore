@@ -1,0 +1,13 @@
+.DS_Store
+__MACOSX/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+example_output/
+qa-output/
+.pytest_cache/
+.env
+.env.*
+!.env.example
