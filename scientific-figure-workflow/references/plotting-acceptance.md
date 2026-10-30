@@ -24,3 +24,7 @@ mpl.rcParams['pdf.fonttype'] = 42
 ## 必需检查与状态
 
 每幅交付图遵循 [结果对齐与验收协议](result-contract.md)，包括非空及有限值、缺字形警告、样本行数、实际视觉检查和干净 Kernel 独立重绘；未执行检查标记 NOT-RUN，失败不得只记录后继续宣称验收通过。
+
+## 版面、编码与导出附加检查
+
+按适用范围为每张图登记 figure:physical-size、figure:layout、figure:encoding、figure:uncertainty-source、figure:vector-text，复用统一 schema 的 check_type=figure；没有区间/矢量导出时有理由地标记 NOT-APPLICABLE。记录实际宽高、字体/线宽、共享坐标/色标规则，以及视觉证据路径。导出尺寸可自动检查，黑白可辨识与实际文本可编辑性不能仅由参数配置推断为 PASS。

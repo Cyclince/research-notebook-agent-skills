@@ -88,6 +88,12 @@ python scientific-reproducibility-audit/scripts/compare_csv.py old.csv new.csv \
 
 三个技能使用同一份 [结果对齐与验收协议](scientific-reproducibility-audit/references/result-contract.md) 和相同验收表字段；各技能携带副本以支持独立安装，仓库检查会检测副本漂移。
 
+## 论文绘图增强（1.3.0）
+
+参考 [figures4papers](https://github.com/ChenLiu-1996/figures4papers) 后增加图型决策、多面板/共享图例、打印辨识和最终物理尺寸规范，同时保留已有的科学保真与独立重绘边界。[来源与取舍](scientific-figure-workflow/references/source-notes.md) 记录所审阅的提交及范围。
+
+可选 [publication_style.py](scientific-figure-workflow/assets/publication_style.py) 提供局部样式、毫米转英寸及明确画幅的导出；不读取数据、不计算统计、不隐藏核心绘图。参见 [接入示例](scientific-figure-workflow/references/style-helper.md)。
+
 ## 本地验证
 
 安装示例依赖后运行：
@@ -110,7 +116,7 @@ python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa
 
 ## 维护
 
-当前技能版本为 `1.2.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
+当前技能版本为 `1.3.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
 
 提交示例请使用可公开的数据，并提供预期行为和实际输出。不要提交原始敏感数据、凭据或大型计算产物。
 

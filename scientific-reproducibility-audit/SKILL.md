@@ -3,7 +3,7 @@ name: scientific-reproducibility-audit
 description: 审核科研代码重构或算法复现是否保持原论文方法、输入范围、计算参数、QC状态和数值结果。适用于 Python、R、MATLAB、Julia 及混合语言的科研模型、结构指标、数值仿真和数据分析；输出逐指标对照、失败原因、版本溯源及可重复运行检查。Use when verifying scientific methods and regression results before accepting refactored notebooks.
 
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   language: "zh-CN"
 ---
 
@@ -21,7 +21,7 @@ metadata:
 4. **运行对照**：在相同输入/条件下分别产生基线和新结果；按指标预设合理绝对/相对容差，记录差值和 QC 变化。
 5. **随机算法**：若结果依赖随机性，记录种子/算法及版本，按重复性/分布评估，不盲目强制逐数一致。
 6. **边界与稳健性**：空输入、缺失、异常单位、不收敛、数据版本差、并行/精度差、仪器/平台差异、敏感性。
-7. **Notebook 验收**：从干净 Kernel 运行，检查无隐藏状态；“仅重绘”是否可在不运行计算阶段下完成。
+7. **Notebook 验收**：从干净 Kernel 运行，检查无隐藏状态；“仅重绘”是否可在不运行计算阶段下完成；核查误差带、坐标/色标、最终尺寸和多面板视觉检查，见 references/audit-checklist.md。
 8. **出具报告**：逐指标 PASS、PASS-WITH-DIFF、FAIL、BLOCKED、NOT-RUN 或 NOT-APPLICABLE；留下必要复现指令和后续阻断项。
 
 ## 禁止行为

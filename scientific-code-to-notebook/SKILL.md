@@ -3,7 +3,7 @@ name: scientific-code-to-notebook
 description: 将难理解的既有科研代码、算法脚本和多模块分析工程重构为清晰、可交互、可维护的 Jupyter Notebook 科研流程。适用于 Python、R、MATLAB、Julia 或混合语言项目，需要保留原始方法与数值结果、独立算法分析单元、分离计算与绘图、支持科研复现和论文制图时使用。Use when refactoring existing scientific pipelines into readable, reproducible, researcher-editable notebooks.
 
 metadata:
-  version: "1.2.0"
+  version: "1.3.0"
   language: "zh-CN"
 ---
 
@@ -72,7 +72,7 @@ metadata:
 
 ### 5. 科研图表工作流
 
-对每类结果至少考虑计算诊断图和论文结果图；并非每个参数都需产生固定数量的图。每图拥有独立标题、显式 Matplotlib/合适绘图库绘图段、顶部可编辑样式参数；按任务或投稿要求输出 `SVG/PDF/PNG` 中所需格式和生成图所用数据，注明分辨率、单位、误差含义和图件来源。图内文字含非拉丁字符（如中文）时必须显式配置含相应字形的字体族；交付的 Notebook 输出中不得残留缺字形（Glyph missing）渲染警告。每张图保存后复核：图非空、绘图数据行数与预期一致。详读 `references/figure-guidelines.md`。
+对每类结果至少考虑计算诊断图和论文结果图；并非每个参数都需产生固定数量的图。每图拥有独立标题、显式 Matplotlib/合适绘图库绘图段、顶部可编辑样式参数；先设定最终物理尺寸、字号、多面板与图例布局，使用局部样式上下文；按任务或投稿要求输出 `SVG/PDF/PNG` 中所需格式和生成图所用数据，注明分辨率、单位、误差含义和图件来源。图内文字含非拉丁字符（如中文）时必须显式配置含相应字形的字体族；交付的 Notebook 输出中不得残留缺字形（Glyph missing）渲染警告。每张图保存后复核：图非空、绘图数据行数与预期一致。详读 `references/figure-guidelines.md`。
 
 ### 6. 复现验收
 
