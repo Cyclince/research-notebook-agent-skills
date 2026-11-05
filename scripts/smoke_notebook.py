@@ -49,9 +49,10 @@ def main():
         context = tempfile.TemporaryDirectory(prefix="research-notebook-qa-")
         directory = Path(context.name)
     try:
-        for name in ("notebook_template.ipynb", "example_measurements.csv"):
-            shutil.copy2(ASSETS / name, directory / name)
-        template = nbformat.read(directory / "notebook_template.ipynb", as_version=4)
+        shutil.copytree(ASSETS, directory, dirs_exist_ok=True)
+        for path in directory.rglob("__pycache__"):
+            shutil.rmtree(path)
+        template = nbformat.read(directory / "real_data_example.ipynb", as_version=4)
         executed = execute(deepcopy(template), directory)
         nbformat.write(executed, directory / "executed.ipynb")
         result = directory / "example_output/group_summary.csv"
@@ -72,30 +73,31 @@ def main():
         result.write_bytes(original_result + b"\n")
         expect_failure(redraw, directory, "Result changed")
         result.write_bytes(original_result)
-        source = directory / "example_measurements.csv"
-        source.write_bytes(source.read_bytes() + b"s10,D,10\n")
+        source = directory / "data/penguins.csv"
+        source.write_bytes(source.read_bytes() + b"\n")
         expect_failure(redraw, directory, "Input changed")
-        shutil.copy2(ASSETS / "example_measurements.csv", source)
+        shutil.copy2(ASSETS / "data/penguins.csv", source)
         changed_parameters = deepcopy(redraw)
         changed_parameters.cells[0].source = changed_parameters.cells[0].source.replace('"ddof": 1', '"ddof": 0')
         expect_failure(changed_parameters, directory, "Science parameters changed")
         changed_source = deepcopy(template)
         changed_source.cells[2].source += "\n# changed scientific implementation\n"
-        nbformat.write(changed_source, directory / "notebook_template.ipynb")
+        nbformat.write(changed_source, directory / "real_data_example.ipynb")
         expect_failure(redraw, directory, "Science code changed")
-        shutil.copy2(ASSETS / "notebook_template.ipynb", directory / "notebook_template.ipynb")
-        # A single-sample group keeps undefined SD; nonfinite input is excluded with evidence.
-        source.write_text("sample_id,group,value\ns01,A,2\ns02,A,4\ns03,B,5\ns04,C,Inf\ns05,C,bad\n", encoding="utf-8")
-        execute(deepcopy(template), directory)
+        shutil.copy2(ASSETS / "real_data_example.ipynb", directory / "real_data_example.ipynb")
+        # Production template must block without a configured real dataset.
+        production = nbformat.read(directory / "notebook_template.ipynb", as_version=4)
+        expect_failure(production, directory, "BLOCKED")
         import pandas as pd
         summary = pd.read_csv(result)
-        assert summary.loc[summary["group"] == "B", "sd"].isna().all()
+        assert int(summary["n"].sum()) == 342
+        assert set(summary["group"]) == {"Adelie", "Chinstrap", "Gentoo"}
         excluded = pd.read_csv(directory / "example_output/excluded_records.csv")
         assert len(excluded) == 2
         # Restore default fixture and redraw for the artifact retained for visual inspection.
-        shutil.copy2(ASSETS / "example_measurements.csv", source)
+        shutil.copy2(ASSETS / "data/penguins.csv", source)
         execute(deepcopy(template), directory)
-        print("PASS: Run All, clean-kernel redraw, style-only change, result/input/parameter/code rejection, singleton SD and nonfinite QC")
+        print("PASS: Run All, clean-kernel redraw, style-only change, result/input/parameter/code rejection, real observed input/QC and unconfigured production rejection")
         print(f"QA artifacts: {directory}")
     finally:
         if context:

@@ -2,13 +2,17 @@
 name: scientific-figure-workflow
 description: 从保存的科研结果创建或改进可独立运行的 Notebook 论文图。用于图型选择、多面板布局、字体与配色调整、统计含义核查，以及可编辑 SVG/PDF 和高分辨率 PNG 导出；保留源数据和溯源信息，不重跑原科学模型。Use for publication figures and independent redraws from saved results.
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   language: "zh-CN"
 ---
 
 # 研究者可编辑的论文图件
 
 从已保存的结果开始，让每张图的输入、统计定义、样式和导出过程清楚可改。保留用户现有绘图库；Matplotlib 工具为可选资源，不把任务改造成另一套框架。整个项目重构用 scientific-code-to-notebook；只做方法审计用 scientific-reproducibility-audit。本技能可单独安装。
+
+## 输入接入是执行前提
+
+先读取 [真实数据输入工作流](references/input-workflow.md)，完成输入发现、来源获取、路径/字段/单位配置、预检与数据预览，再执行算法。数据不可用时提供具体请求清单并标记 BLOCKED，不自动回退到模拟数据。明确是原论文复现、方法迁移还是输入示例；三个阶段的成果不能互相替代。
 
 ## 执行流程
 

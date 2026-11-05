@@ -1,0 +1,24 @@
+{
+  "dataset_id": "YOUR_DATASET_VERSION",
+  "path": "data/raw/measurements.csv",
+  "source": "",
+  "source_type": "user_data",
+  "role": "paper_reproduction",
+  "paper_reference": "",
+  "sha256": "",
+  "expected_rows": null,
+  "columns": {
+    "sample_id": "sample_id",
+    "group": "group",
+    "value": "value"
+  },
+  "units": {
+    "value": ""
+  },
+  "missing_values": [
+    "",
+    "NA",
+    "NaN"
+  ],
+  "encoding": "utf-8-sig"
+}

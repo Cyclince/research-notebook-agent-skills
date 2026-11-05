@@ -1,0 +1,25 @@
+{
+  "dataset_id": "palmerpenguins-8957207",
+  "path": "data/penguins.csv",
+  "source": "https://github.com/allisonhorst/palmerpenguins/blob/8957207b78d6ccd1b4654a9dd9c9041b657478ab/inst/extdata/penguins.csv",
+  "source_type": "public_observations",
+  "role": "input_example",
+  "paper_reference": "",
+  "sha256": "f204db2c753b0937caac3cb35258562c14f073e4bbc76be24b4c51ce22767a93",
+  "expected_rows": 344,
+  "columns": {
+    "sample_id": null,
+    "group": "species",
+    "value": "bill_length_mm"
+  },
+  "units": {
+    "value": "mm"
+  },
+  "missing_values": [
+    "",
+    "NA",
+    "NaN"
+  ],
+  "encoding": "utf-8-sig",
+  "id_policy": "source_row_number"
+}

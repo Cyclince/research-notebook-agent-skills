@@ -3,7 +3,7 @@ name: scientific-code-to-notebook
 description: 将难理解的既有科研代码、算法脚本和多模块分析工程重构为清晰、可交互、可维护的 Jupyter Notebook 科研流程。适用于 Python、R、MATLAB、Julia 或混合语言项目，需要保留原始方法与数值结果、独立算法分析单元、分离计算与绘图、支持科研复现和论文制图时使用。Use when refactoring existing scientific pipelines into readable, reproducible, researcher-editable notebooks.
 
 metadata:
-  version: "1.3.0"
+  version: "1.4.0"
   language: "zh-CN"
 ---
 
@@ -32,6 +32,10 @@ metadata:
 6. **绘图与重计算解耦。** 图表单元从保存的数值表/必要中间数据重新绘制；调整字、颜色、图例、坐标轴时无须重新处理大型数据。绘图单元必须先断言输入数据非空——空数据出图按 FAIL 处置，不得静默保存空图。
 7. **科学边界可见。** 明确观测值与真值、缺失与零、算法估计与独立验证、统计推断层级、平台/批次/样本依赖。
 8. **不破坏原始成果。** 原文件、已验证结果不可覆盖；先版本备份或分支，结果写入新目录。
+
+## 输入接入是执行前提
+
+先读取 [真实数据输入工作流](references/input-workflow.md)，完成输入发现、来源获取、路径/字段/单位配置、预检与数据预览，再执行算法。数据不可用时提供具体请求清单并标记 BLOCKED，不自动回退到模拟数据。明确是原论文复现、方法迁移还是输入示例；三个阶段的成果不能互相替代。
 
 ## 工作步骤
 
@@ -93,7 +97,8 @@ metadata:
 - `references/figure-guidelines.md`：细粒度可编辑科研绘图。
 - `references/project-layout.md`：普适目录与命名规范。
 - `references/verification.md`：数值回归、复现记录与验收。
-- `assets/notebook_template.ipynb`：以合成演示 CSV 说明计算、保存和独立重绘，**不是任何学科的科学算法**。
+- `assets/notebook_template.ipynb`：真实输入待配置入口；`assets/real_data_example.ipynb`：公开真实观测数据接入示例。二者的分组统计均不能替代目标论文算法。
+- `assets/input_adapter.py`、`assets/input_config.json`：CSV/TSV 读取预检与输入配置；示例配置为 `assets/penguins_input.json`。
 - `assets/method_registry_template.csv`、`assets/validation_matrix_template.csv`：方法与验证记录模板。
 
 ## 最终验收问题

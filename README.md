@@ -49,11 +49,9 @@ cp -R scientific-code-to-notebook /path/to/your-project/.agents/skills/
 
 > 使用 scientific-reproducibility-audit，对比旧输出和新版 Notebook。联合主键是 sample_id、time；先检查完整样本集合，再核对数值、缺失、QC 和单位，生成统一验收表，列出未运行与阻断项。
 
-## 可运行教学模板
+## 真实输入与可运行示例（1.4.0）
 
-[notebook_template.ipynb](scientific-code-to-notebook/assets/notebook_template.ipynb) 使用 [人工示例数据](scientific-code-to-notebook/assets/example_measurements.csv)，演示读取、QC、分组统计、来源记录、独立重绘和图件检查。**示例均值不是任何学科的论文算法，示例输出不能用于科研结论。**
-
-使用 Python 3.11 或更新版本：
+先安装 Python 3.11+ 的示例依赖：
 
 ```bash
 python -m venv .venv
@@ -61,11 +59,20 @@ source .venv/bin/activate
 python -m pip install -r requirements-example.txt
 ```
 
-Windows 使用 `.venv\Scripts\activate` 激活。通过支持 Jupyter 的编辑器选择这个 Python 环境，将 Notebook 工作目录设为 `scientific-code-to-notebook/assets/`，然后 Run All。若需要浏览器版 JupyterLab，可在该环境另行安装。
+Windows 使用 `.venv\Scripts\activate`。在支持 Jupyter 的编辑器选择此环境，工作目录设为 scientific-code-to-notebook/assets/。
 
-运行结果写入该目录的 `example_output/`，包含统计表、被排除记录及原因、来源哈希、绘图数据、参数和 SVG/PDF/PNG。默认图内使用英文以支持跨平台运行；中文标签需配置实际可用的 CJK 字体。
+**自己的论文/项目数据**：编辑 [input_config.json](scientific-code-to-notebook/assets/input_config.json)，填实际路径、来源、论文引用、文件 SHA-256、字段映射、单位与缺失标记；再执行：
 
-仅重绘时，重启 Kernel，单独运行“4. 独立绘图”代码单元。修改样式不改变计算缓存；输入、科学参数、科学代码或结果文件变化时会停止，并提示显式重算。图件视觉检查默认记录为 NOT-RUN，必须实际打开图件检查后才能改为 PASS。
+```bash
+shasum -a 256 /path/to/your/data.csv  # 将实际哈希填写到配置中
+python input_adapter.py --config input_config.json
+```
+
+预检通过后打开 [notebook_template.ipynb](scientific-code-to-notebook/assets/notebook_template.ipynb)。默认配置尚未接入用户数据，会明确 BLOCKED，不再自动使用模拟 CSV。映射器只承担本示例 CSV/TSV 读取；真实算法需要在可见计算单元中实现，其他数据格式使用对应适配器。
+
+**先体验真实数据工作流**：打开 [real_data_example.ipynb](scientific-code-to-notebook/assets/real_data_example.ipynb) 并 Run All。包内包含固定版本、CC0 许可的 [Palmer Penguins 真实观测数据](scientific-code-to-notebook/assets/data/SOURCE.md)，通过 [penguins_input.json](scientific-code-to-notebook/assets/penguins_input.json) 接入 344 条测量记录，342 条有效喙长用于分组统计。示例仅展示接入与重绘，不宣称复现目标论文算法。无需运行时联网下载。
+
+输入来源、字段/单位、缺失规则、哈希与 QC 排除记录随结果保存到 example_output/；重启 Kernel 后可单独运行绘图单元。输入、配置或适配器改变会拦截旧缓存。缺少真实输入时按 [输入工作流](scientific-code-to-notebook/references/input-workflow.md) 获取数据或生成具体请求清单。
 
 ## CSV 结果对照
 
@@ -104,7 +111,7 @@ python -m unittest discover -s tests -v
 python scripts/smoke_notebook.py
 ```
 
-验证覆盖元数据和资源链接、协议与 CSV schema 一致性、对照工具边界条件、真实 Kernel Run All、干净 Kernel 独立重绘、样式变更、缓存失效拦截、单样本 SD 与非有限值 QC。Notebook 验证使用临时目录，不写入提交的模板。
+验证覆盖元数据和资源链接、协议与 CSV schema 一致性、对照工具边界条件、真实 Kernel Run All、干净 Kernel 独立重绘、样式变更、缓存失效拦截、真实观测数据接入、缺失 QC 与未配置输入阻断。Notebook 验证使用临时目录，不写入提交的模板。
 
 保留可查看的 QA 图件：
 
@@ -116,7 +123,7 @@ python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa
 
 ## 维护
 
-当前技能版本为 `1.3.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
+当前技能版本为 `1.4.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
 
 提交示例请使用可公开的数据，并提供预期行为和实际输出。不要提交原始敏感数据、凭据或大型计算产物。
 
