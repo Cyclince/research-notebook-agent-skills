@@ -1,36 +1,47 @@
+<div align="center">
+
 # Research Notebook Agent Skills
 
-把既有科研代码整理成研究者能读懂、修改和验证的 Jupyter Notebook，并保留方法、数据与结果之间的证据链。
+**从真实数据开始，把科研代码整理成看得懂、改得动、可验证的 Notebook。**
 
-本仓库提供三个可独立安装的 Agent Skill，覆盖代码重构、论文绘图和复现审计。适用于 Python、R、MATLAB、Julia 及混合语言项目；实际执行需要对应语言环境。跨语言调用与 Python 算法迁移会明确区分。
+<img src="./assets/banner.png" alt="Research Notebook Agent Skills — 真实数据、可读方法与可复现结果的概念封面" width="100%">
 
-| Skill | 何时使用 | 主要交付 |
-|---|---|---|
-| [scientific-code-to-notebook](scientific-code-to-notebook/SKILL.md) | 旧科研工程难以阅读，需要保守重构 | 可读 Notebook、方法映射、结果与复现说明 |
-| [scientific-figure-workflow](scientific-figure-workflow/SKILL.md) | 已有计算结果，只需独立重绘或调整图件 | 绘图 Notebook、图件、绘图数据与样式记录 |
-| [scientific-reproducibility-audit](scientific-reproducibility-audit/SKILL.md) | 要核验重构是否改变科学方法和结果 | 逐字段验收矩阵、差异解释与阻断项 |
+[![Release](https://img.shields.io/badge/release-1.5.0-18B7B5?style=flat-square)](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest)
+[![Validation](https://github.com/Cyclince/research-notebook-agent-skills/actions/workflows/validate.yml/badge.svg)](https://github.com/Cyclince/research-notebook-agent-skills/actions/workflows/validate.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-EA4C89?style=flat-square)](./LICENSE)
 
-## 精简输出（1.5.0）
+**[下载 Skills](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest)** · [快速开始](#快速开始) · [真实数据示例](#运行真实数据示例) · [使用方式](#使用方式)
 
-每图默认只生成 PNG；需要 TIFF 时将 FORMAT 改为 tif/tiff。保留绘图代码以便修改，不附带 PDF/SVG。示例移除重复输入清单、绘图数据副本和独立样式文件：输入证据并入 provenance.json，样式并入 figure_provenance.json，绘图直接引用已保存结果。输入预览仅显示前 5 行。
+</div>
 
-检查证据在输入、代码、参数与环境未变时复用；最终报告只保留关键结果、异常和文件入口。
+---
 
-## 工作原则
+## 让科研流程更容易理解与复现
 
-- 先锁定旧实现、真实输入、科学参数和基线，再重构；不静默修正原算法。
-- 核心科学步骤在 Notebook 中可见；共享 I/O 和经过验证的性能内核可以保留为辅助代码。
-- 计算和绘图解耦。独立绘图从已保存结果开始，校验来源，不自动触发重计算。
-- 新旧结果先核对联合主键、字段和样本集合，再比较数值、缺失与 QC。
-- 区分已通过、带差异通过、失败、阻断、未运行与不适用；部分检查通过不代表整体验收通过。
+从分散的算法脚本到可编辑的 Notebook，这套技能帮助你接通真实数据、展开关键计算、独立调整论文图，并对照原输出核验结果。支持 Python、R、MATLAB、Julia 及混合语言项目，运行时使用对应环境。
 
-这些技能提供工作流程和辅助工具，不保证任意科研方法正确；没有真实数据、方法来源或运行环境时，必须报告验证范围。
+**真实输入 → 可读计算 → 独立绘图 → 结果核验**
 
-## 安装
+## 选择适合你的技能
 
-下载本仓库，选择需要的**整个技能目录**复制到客户端的 Skills 搜索路径。保留目录内的 `SKILL.md`、`references/`、`assets/` 和存在的 `scripts/`。
+| 技能 | 适用场景 | 交付结果 |
+| --- | --- | --- |
+| [代码转 Notebook](./scientific-code-to-notebook/SKILL.md) | 既有科研代码难读、难改 | 显式计算步骤、真实输入配置和可独立运行的 Notebook |
+| [论文绘图](./scientific-figure-workflow/SKILL.md) | 已有结果，需要论文绘图或调整版式 | 可编辑绘图代码、单一 PNG/TIFF 图件与来源记录 |
+| [复现审计](./scientific-reproducibility-audit/SKILL.md) | 需要确认重构或复现是否改变结果 | 按字段对齐的验收表、差异解释与未验证项 |
 
-例如，在支持项目级 `.agents/skills/` 的客户端中：
+三个技能按任务选用，也可以串联完成从代码整理到结果核验的流程。
+
+## 快速开始
+
+### 1. 下载并安装
+
+在 [Releases](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest) 下载单个技能或整套 ZIP。解压后，将**完整技能目录**放入客户端的 Skills 搜索路径，保留目录中的说明和资源文件。三个技能可独立安装，安装本身无需 Python 依赖。
+
+<details>
+<summary>通过 Git 克隆安装</summary>
+
+以下以支持项目级 `.agents/skills/` 的客户端为例，将 `/path/to/your-project` 换成实际路径：
 
 ```bash
 git clone https://github.com/Cyclince/research-notebook-agent-skills.git
@@ -39,25 +50,60 @@ mkdir -p /path/to/your-project/.agents/skills
 cp -R scientific-code-to-notebook /path/to/your-project/.agents/skills/
 ```
 
-将 `/path/to/your-project` 换成实际项目路径。其他客户端（包括 DeepSeek Harness）的扫描路径和启用方式以其配置为准。三个技能不要求同时安装；仓库根目录的检查脚本和示例依赖仅用于维护与演示。
+绘图和审计技能按需复制；其他客户端按其配置选择安装路径。
 
-## 使用示例
+</details>
 
-**重构旧科研项目**
+<details>
+<summary>校验下载文件（SHA-256）</summary>
 
-> 使用 scientific-code-to-notebook 审查这个旧项目，先冻结基线和方法映射，再按研究问题拆分 Notebook。保留算法、样本选择和 QC，展示核心计算，计算与绘图分离，并逐字段比较旧版结果。
+Release 附带 `SHA256SUMS` 与记录源提交、压缩包哈希的 `RELEASE-MANIFEST.json`。下载完整附件后执行：
 
-**只调整图件**
+```bash
+shasum -a 256 -c SHA256SUMS
+```
 
-> 使用 scientific-figure-workflow，从保存的结果表重绘这三张图。开放字体、尺寸、坐标轴和图例参数；默认仅导出 PNG，需要时改为 TIFF，保存绘图数据及参数。不要重新拟合模型。
+只下载一个包时，使用 `shasum -a 256 文件名.zip`，与 `SHA256SUMS` 对应条目核对。
 
-**核验复现结果**
+</details>
 
-> 使用 scientific-reproducibility-audit，对比旧输出和新版 Notebook。联合主键是 sample_id、time；先检查完整样本集合，再核对数值、缺失、QC 和单位，生成统一验收表，列出未运行与阻断项。
+### 2. 提供代码与数据
 
-## 真实输入与可运行示例（1.4.0）
+告诉 Agent 项目位置、真实输入路径和目标。已有结果只需改图时，直接提供结果表与图件要求；需要算法复现时，一并提供论文或原实现。
 
-先安装 Python 3.11+ 的示例依赖：
+### 3. 选择任务并开始
+
+使用下面对应的请求，或先体验随包提供的 [真实数据示例](#运行真实数据示例)。
+
+## 使用方式
+
+把项目代码、数据路径和任务目标交给 Agent，并指定需要的技能。
+
+**整理已有科研代码**
+
+> 使用 scientific-code-to-notebook，把这个项目整理为可读 Notebook。先接入项目里的真实数据，保留原算法与 QC，展示关键计算步骤，并对照原输出验证结果。
+
+**调整论文图件**
+
+> 使用 scientific-figure-workflow，从保存的结果表重绘这三张图。开放尺寸、字体、坐标轴和图例参数，每张图只导出 PNG。不要重新拟合模型。
+
+**核验算法复现**
+
+> 使用 scientific-reproducibility-audit，对比旧输出与新版 Notebook。按 sample_id 和 time 对齐，检查数值、缺失状态、QC 和单位，只报告关键差异与未验证项。
+
+## 运行真实数据示例
+
+仓库提供两个 Notebook 入口：
+
+| 入口 | 用途 |
+| --- | --- |
+| [real_data_example.ipynb](./scientific-code-to-notebook/assets/real_data_example.ipynb) | 使用随包提供的 Palmer Penguins 真实观测数据，体验输入、QC、统计与独立重绘 |
+| [notebook_template.ipynb](./scientific-code-to-notebook/assets/notebook_template.ipynb) | 接入自己的论文或项目数据，再替换为目标算法 |
+
+<details>
+<summary>展开示例运行步骤 · Python 3.11+</summary>
+
+在仓库根目录安装示例依赖，需要 Python 3.11+：
 
 ```bash
 python -m venv .venv
@@ -65,51 +111,31 @@ source .venv/bin/activate
 python -m pip install -r requirements-example.txt
 ```
 
-Windows 使用 `.venv\Scripts\activate`。在支持 Jupyter 的编辑器选择此环境，工作目录设为 scientific-code-to-notebook/assets/。
+Windows 使用 `.venv\Scripts\activate`。在支持 Jupyter 的编辑器中选择此环境，将工作目录设为 `scientific-code-to-notebook/assets/`，打开 `real_data_example.ipynb` 并运行全部单元。
 
-**自己的论文/项目数据**：编辑 [input_config.json](scientific-code-to-notebook/assets/input_config.json)，填实际路径、来源、论文引用、文件 SHA-256、字段映射、单位与缺失标记；再执行：
+</details>
 
-```bash
-shasum -a 256 /path/to/your/data.csv  # 将实际哈希填写到配置中
-python input_adapter.py --config input_config.json
-```
+示例从 344 条观测中识别出 342 条有效喙长记录，展示分组统计和绘图；数据来源、固定版本与 CC0 许可见 [数据说明](./scientific-code-to-notebook/assets/data/SOURCE.md)。它用于演示真实输入接入，不代表目标论文算法已被复现。
 
-预检通过后打开 [notebook_template.ipynb](scientific-code-to-notebook/assets/notebook_template.ipynb)。默认配置尚未接入用户数据，会明确 BLOCKED，不再自动使用模拟 CSV。映射器只承担本示例 CSV/TSV 读取；真实算法需要在可见计算单元中实现，其他数据格式使用对应适配器。
+接入自己的数据时，编辑 [input_config.json](./scientific-code-to-notebook/assets/input_config.json)，填写实际路径、来源、哈希、字段映射、单位和缺失规则，再运行模板。表格示例适配器支持 CSV/TSV；数组、影像和时空数据使用对应读取器，详见 [输入工作流](./scientific-code-to-notebook/references/input-workflow.md)。
 
-**先体验真实数据工作流**：打开 [real_data_example.ipynb](scientific-code-to-notebook/assets/real_data_example.ipynb) 并 Run All。包内包含固定版本、CC0 许可的 [Palmer Penguins 真实观测数据](scientific-code-to-notebook/assets/data/SOURCE.md)，通过 [penguins_input.json](scientific-code-to-notebook/assets/penguins_input.json) 接入 344 条测量记录，342 条有效喙长用于分组统计。示例仅展示接入与重绘，不宣称复现目标论文算法。无需运行时联网下载。
+## 输出保持精简，证据保留完整
 
-输入来源、字段/单位、缺失规则、哈希与 QC 排除记录随结果保存到 example_output/；重启 Kernel 后可单独运行绘图单元。输入、配置或适配器改变会拦截旧缓存。缺少真实输入时按 [输入工作流](scientific-code-to-notebook/references/input-workflow.md) 获取数据或生成具体请求清单。
+- **图片**：每图只输出一种格式，默认 PNG，可改为 TIFF；绘图代码保留可编辑参数。
+- **计算**：读取保存结果独立重绘，调整样式无需重跑模型；输入、代码或科学参数变化会拦截不匹配缓存。
+- **记录**：共用结果表与来源信息，复用仍有效的检查证据，报告聚焦差异、阻断项和未运行项。
 
-## CSV 结果对照
+> [!NOTE]
+> 缺少真实输入时会报告 `BLOCKED`，不会自动以模拟数据替代。公开数据示例跑通不代表原论文算法复现通过。
 
-审计技能自带标准库脚本，无需安装第三方包：
-
-```bash
-python scientific-reproducibility-audit/scripts/compare_csv.py old.csv new.csv \
-  --keys sample_id time \
-  --numeric estimate \
-  --qc status \
-  --atol 1e-8 --rtol 1e-6 \
-  --dataset-id dataset-v1 --method method-a \
-  --source-code-version OLD_COMMIT --refactor-code-version NEW_COMMIT \
-  --output validation_matrix.csv
-```
-
-命令中的列名、版本和容差须替换为实际方法设定。不同容差的指标分别比较。工具按字符串联合键对齐，保留前导零，拒绝重复/空键、缺行、多行、缺字段和空表；检查数值缺失掩码与 QC。未指定为数值的字段按原字符串比较。
-
-退出码：`0` 表示本次表格检查通过，`1` 表示存在 FAIL，`2` 表示读取或调用条件阻断。它不核实论文、单位、输入同源性或随机算法等效性，不能替代完整科研审计。
-
-三个技能使用同一份 [结果对齐与验收协议](scientific-reproducibility-audit/references/result-contract.md) 和相同验收表字段；各技能携带副本以支持独立安装，仓库检查会检测副本漂移。
-
-## 论文绘图增强（1.3.0）
-
-参考 [figures4papers](https://github.com/ChenLiu-1996/figures4papers) 后增加图型决策、多面板/共享图例、打印辨识和最终物理尺寸规范，同时保留已有的科学保真与独立重绘边界。[来源与取舍](scientific-figure-workflow/references/source-notes.md) 记录所审阅的提交及范围。
-
-可选 [publication_style.py](scientific-figure-workflow/assets/publication_style.py) 提供局部样式、毫米转英寸及明确画幅的导出；不读取数据、不计算统计、不隐藏核心绘图。参见 [接入示例](scientific-figure-workflow/references/style-helper.md)。
+详细约定见 [结果验收协议](./scientific-reproducibility-audit/references/result-contract.md)；CSV 对照工具见 [审计技能](./scientific-reproducibility-audit/SKILL.md#标量-csv-对照工具)。
 
 ## 本地验证
 
-安装示例依赖后运行：
+<details>
+<summary>展开维护与验证命令</summary>
+
+安装示例依赖后，在仓库根目录运行：
 
 ```bash
 python scripts/check_package.py
@@ -117,22 +143,16 @@ python -m unittest discover -s tests -v
 python scripts/smoke_notebook.py
 ```
 
-验证覆盖元数据和资源链接、协议与 CSV schema 一致性、对照工具边界条件、真实 Kernel Run All、干净 Kernel 独立重绘、样式变更、缓存失效拦截、真实观测数据接入、缺失 QC 与未配置输入阻断。Notebook 验证使用临时目录，不写入提交的模板。
+检查覆盖技能结构、数据接入、结果对照、PNG/TIFF 导出、Notebook 完整执行、独立重绘与缓存失效。GitHub Actions 在 Python 3.11 和 3.12 上运行这些检查；真实项目仍需核验方法依据、科学结果与实际图件。
 
-保留可查看的 QA 图件：
+需要保留示例输出供查看时，使用 `python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa`，输出目录须尚不存在。
 
-```bash
-python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa
-```
+</details>
 
-该目录必须尚不存在。自动测试不能替代图件视觉检查或真实项目的科学验收。GitHub Actions 在 Linux 的 Python 3.11 和 3.12 上运行相同检查；CI 状态以实际运行结果为准。
+## 参考与许可
 
-## 维护
+论文绘图流程参考了 [figures4papers](https://github.com/ChenLiu-1996/figures4papers) 的部分设计思路，具体范围与许可说明见 [参考来源](./scientific-figure-workflow/references/source-notes.md)。
 
-当前技能版本为 `1.5.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
+项目基于 [MIT License](./LICENSE) 开源，外部数据、论文与原作者代码遵循各自许可。
 
-提交示例请使用可公开的数据，并提供预期行为和实际输出。不要提交原始敏感数据、凭据或大型计算产物。
-
-## 许可
-
-[MIT](LICENSE)。外部论文、数据、原作者代码及其运行环境遵循各自许可证与使用条件。
+作者：[@Cyclince](https://github.com/Cyclince)
