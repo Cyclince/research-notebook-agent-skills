@@ -3,7 +3,7 @@ name: scientific-reproducibility-audit
 description: 审核科研代码重构或算法复现是否保持原论文方法、输入范围、计算参数、QC状态和数值结果。适用于 Python、R、MATLAB、Julia 及混合语言的科研模型、结构指标、数值仿真和数据分析；输出逐指标对照、失败原因、版本溯源及可重复运行检查。Use when verifying scientific methods and regression results before accepting refactored notebooks.
 
 metadata:
-  version: "1.4.0"
+  version: "1.5.0"
   language: "zh-CN"
 ---
 
@@ -15,7 +15,7 @@ metadata:
 
 ## 输入接入是执行前提
 
-先读取 [真实数据输入工作流](references/input-workflow.md)，完成输入发现、来源获取、路径/字段/单位配置、预检与数据预览，再执行算法。数据不可用时提供具体请求清单并标记 BLOCKED，不自动回退到模拟数据。明确是原论文复现、方法迁移还是输入示例；三个阶段的成果不能互相替代。
+按 [真实数据输入工作流](references/input-workflow.md) 核验现有输入及来源；缺失时标记 BLOCKED，不用模拟数据替代。仅重绘时核验已保存结果，不重复获取原始数据或运行算法。
 
 ## 操作顺序
 
@@ -38,7 +38,7 @@ metadata:
 
 ## 验收文件
 
-优先生成可机器读取的 `validation_matrix.csv`、`input_manifest.csv`、`method_registry.csv`、`environment_manifest` 以及简短审计结论。缺数据时，保留结构但报告 `BLOCKED`。
+只补充一份 `validation_matrix.csv` 与简短审计结论；输入、方法、环境信息引用已有记录，缺失部分集中补齐，避免为同一信息生成多份清单。缺数据时报告 `BLOCKED`，不生成无内容的占位报告。
 
 详细模板与常见问题见 `references/audit-checklist.md`。
 
@@ -55,3 +55,7 @@ python scripts/compare_csv.py old.csv new.csv --keys sample_id --numeric estimat
 ```
 
 脚本按字符串主键对齐，逐字段检查，输出统一 schema；退出码 0 表示所执行的表格检查通过，1 表示 FAIL，2 表示输入不可读取或调用条件阻断。数值列需显式指定，未指定列按原字符串比较；空字符串和 NaN 为数值缺失，Inf 为 FAIL。不同容差的指标分别运行并保存独立报告。缺失字段/键、重复键、空表不会通过。它不验证数据同源、单位、论文方法或随机等效性，也不自动生成 PASS-WITH-DIFF；完整审计仍须履行上述流程。
+
+## 避免重复工作
+
+同一任务中已有且输入、代码、参数、环境未变的检查证据直接复用；变化后只重做受影响的检查。多个图共享结果表和来源记录，不逐图复制相同数据。输出索引、参数和来源可合并为一份清单；不另写内容相同的总结、检查表或日志。最终回复只列关键结果、异常/未运行项与文件入口。

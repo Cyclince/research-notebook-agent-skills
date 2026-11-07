@@ -66,10 +66,19 @@ def main():
         execute(redraw, directory)
         assert result.read_bytes() == original_result
         assert manifest.read_bytes() == original_manifest
-        style = json.loads((directory / "example_output/figure_parameters.json").read_text())
-        assert style["color"] == "#C65D3B"
+        style = json.loads((directory / "example_output/figure_provenance.json").read_text())
+        assert style["style"]["color"] == "#C65D3B"
         assert all((directory / f"example_output/group_mean_example.{ext}").stat().st_size > 0
-                   for ext in ("svg", "pdf", "png"))
+                   for ext in ("png",))
+        assert not list((directory / "example_output").glob("*.pdf"))
+        assert not list((directory / "example_output").glob("*.svg"))
+        tiff = deepcopy(redraw)
+        tiff.cells[0].source = tiff.cells[0].source.replace('FORMAT = "png"', 'FORMAT = "tif"')
+        execute(tiff, directory)
+        from PIL import Image
+        with Image.open(directory / "example_output/group_mean_example.tif") as image:
+            assert image.format == "TIFF"
+        (directory / "example_output/group_mean_example.tif").unlink()
         result.write_bytes(original_result + b"\n")
         expect_failure(redraw, directory, "Result changed")
         result.write_bytes(original_result)

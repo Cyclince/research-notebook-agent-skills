@@ -18,7 +18,7 @@ project/
 │   ├── method_a/{data,tables,figures,qc}/
 │   ├── method_b/{data,tables,figures,qc}/
 │   ├── comparisons/
-│   └── publication_figures/{svg,pdf,png,figure_data}/
+│   └── publication_figures/
 ├── archive/                 # 原脚本快照（或 Git 标签/分支）
 ├── environment.yml          # 或 requirements.txt、renv.lock 等
 └── README.md

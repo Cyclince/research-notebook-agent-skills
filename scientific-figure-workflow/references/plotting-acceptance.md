@@ -1,30 +1,5 @@
-# 图件验收与版式检查
+# 图件验收
 
-## 每幅图应具备
+按 [统一协议](result-contract.md) 检查非空、有限值、样本数、字形、来源身份和独立重绘；只在同一份验收表记录一次。
 
-- 独立代码块和可调参数；仅重新运行该块即可重新绘图。
-- 真实来源数据及其字段含义，样本数/统计单位可追踪。
-- 颜色/点形/线型具有稳定编码；图例、单位、轴名称不缺失。
-- 合理的图幅及边距，不剪裁坐标标签。
-- 图表可跨文稿复用（SVG/PDF/PNG）；文本可编辑需实际抽检，不是凭扩展名判断。
-- 图表源数据文件、图表脚本/Notebook路径和参数快照。
-- 正确解释 n、SD、SE、CI、缺失值、配对/嵌套设计；禁止虚构显著性。
-
-## 适用于 Matplotlib 的配置示例
-
-```python
-import matplotlib as mpl
-mpl.rcParams['svg.fonttype'] = 'none'
-mpl.rcParams['pdf.fonttype'] = 42
-# 显式设置 FIGSIZE / LABELSIZE / DPI / LEGEND_LOC 等
-```
-
-对字体丢失、SVG 中对象被转为路径、大量散点文件巨大等问题应在交付记录中注明并测试，而不是承诺所有图元无条件可编辑。
-
-## 必需检查与状态
-
-每幅交付图遵循 [结果对齐与验收协议](result-contract.md)，包括非空及有限值、缺字形警告、样本行数、实际视觉检查和干净 Kernel 独立重绘；未执行检查标记 NOT-RUN，失败不得只记录后继续宣称验收通过。
-
-## 版面、编码与导出附加检查
-
-按适用范围为每张图登记 figure:physical-size、figure:layout、figure:encoding、figure:uncertainty-source、figure:vector-text，复用统一 schema 的 check_type=figure；没有区间/矢量导出时有理由地标记 NOT-APPLICABLE。记录实际宽高、字体/线宽、共享坐标/色标规则，以及视觉证据路径。导出尺寸可自动检查，黑白可辨识与实际文本可编辑性不能仅由参数配置推断为 PASS。
+实际打开所选 PNG/TIFF，检查最终尺寸、标签裁切、图例与编码、单位及 n/SD/SE/CI 的含义。记录异常及证据路径；未打开图不得把视觉检查标为 PASS。共享同一结果表的图直接引用该表，不另存重复副本。

@@ -10,6 +10,12 @@
 | [scientific-figure-workflow](scientific-figure-workflow/SKILL.md) | 已有计算结果，只需独立重绘或调整图件 | 绘图 Notebook、图件、绘图数据与样式记录 |
 | [scientific-reproducibility-audit](scientific-reproducibility-audit/SKILL.md) | 要核验重构是否改变科学方法和结果 | 逐字段验收矩阵、差异解释与阻断项 |
 
+## 精简输出（1.5.0）
+
+每图默认只生成 PNG；需要 TIFF 时将 FORMAT 改为 tif/tiff。保留绘图代码以便修改，不附带 PDF/SVG。示例移除重复输入清单、绘图数据副本和独立样式文件：输入证据并入 provenance.json，样式并入 figure_provenance.json，绘图直接引用已保存结果。输入预览仅显示前 5 行。
+
+检查证据在输入、代码、参数与环境未变时复用；最终报告只保留关键结果、异常和文件入口。
+
 ## 工作原则
 
 - 先锁定旧实现、真实输入、科学参数和基线，再重构；不静默修正原算法。
@@ -43,7 +49,7 @@ cp -R scientific-code-to-notebook /path/to/your-project/.agents/skills/
 
 **只调整图件**
 
-> 使用 scientific-figure-workflow，从保存的结果表重绘这三张图。开放字体、尺寸、坐标轴和图例参数；按投稿要求导出 PDF 与 PNG，保存绘图数据及参数。不要重新拟合模型。
+> 使用 scientific-figure-workflow，从保存的结果表重绘这三张图。开放字体、尺寸、坐标轴和图例参数；默认仅导出 PNG，需要时改为 TIFF，保存绘图数据及参数。不要重新拟合模型。
 
 **核验复现结果**
 
@@ -123,7 +129,7 @@ python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa
 
 ## 维护
 
-当前技能版本为 `1.4.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
+当前技能版本为 `1.5.0`，统一验收 schema 为 `1.0`。修改协议时同步更新三个 `references/result-contract.md`；修改验收列时同步更新三个 CSV 模板和对照工具的 `FIELDS`，并运行检查。
 
 提交示例请使用可公开的数据，并提供预期行为和实际输出。不要提交原始敏感数据、凭据或大型计算产物。
 

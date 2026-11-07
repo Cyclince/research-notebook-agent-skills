@@ -28,25 +28,24 @@ def publication_style(*, font_family='DejaVu Sans', font_size=9, line_width=1.0,
         'axes.linewidth': line_width, 'lines.linewidth': line_width,
         'axes.spines.top': not hide_top_right, 'axes.spines.right': not hide_top_right,
         'legend.frameon': False, 'text.usetex': False,
-        'svg.fonttype': 'none', 'pdf.fonttype': 42, 'savefig.bbox': None,
+        'savefig.bbox': None,
     }):
         yield
 
 
-def export_figure(fig, output_stem, *, formats=('pdf', 'png'), dpi=300,
+def export_figure(fig, output_stem, *, format='png', dpi=300,
                   exact_size=True, facecolor='white'):
     """Save supplied figure; return evidence, not a scientific/visual PASS.
 
     Use inside publication_style, after checking data and adding plot artists.
     Files produced before a render/save failure must not be treated as accepted.
     """
-    formats = tuple(formats)
-    if not formats or len(formats) != len(set(formats)) or any(x not in ('pdf', 'svg', 'png') for x in formats):
-        raise ValueError('Specify unique output formats from pdf, svg, png')
+    if format not in ('png', 'tif', 'tiff'):
+        raise ValueError('Specify one output format: png, tif or tiff')
     if not math.isfinite(dpi) or dpi <= 0:
         raise ValueError('DPI must be finite and positive')
     output_stem = Path(output_stem)
-    paths = [Path(str(output_stem) + '.' + ext) for ext in formats]
+    paths = [Path(str(output_stem) + '.' + ext) for ext in (format,)]
     output_stem.parent.mkdir(parents=True, exist_ok=True)
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter('always')

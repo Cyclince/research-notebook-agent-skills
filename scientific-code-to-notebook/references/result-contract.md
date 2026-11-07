@@ -49,5 +49,5 @@ schema_version,dataset_id,source_code_version,refactor_code_version,method,check
 - 过滤后存在有效绘图数据；表有行不等于有有限可绘制值。已知预期样本/组数时核对，并记录 QC 排除数。
 - 单独在干净 Kernel 执行绘图入口，无计算阶段内存依赖；从结果文件重绘，不隐含拟合或重新建模。
 - 捕获实际渲染/保存阶段的缺字形警告；缺字形或空图为 FAIL。字体不可用时说明环境缺口，不靠屏蔽警告通过。
-- 打开输出图检查标签、裁切、单位、n 与误差定义；矢量文字可编辑性须抽检。PNG/PDF/SVG 按任务或投稿要求选择，不强制所有任务三种齐全。
+- 打开输出图检查标签、裁切、单位、n 与误差定义。每图只输出 PNG 或 TIFF 中一种，默认 PNG；可编辑性由绘图代码保留。
 - 保存绘图数据、样式参数、来源及输出索引；对应记录 figure:nonempty、figure:valid-values、figure:no-glyph-warning、figure:data-rows 和 figure:visual-check。视觉检查未做则 NOT-RUN。

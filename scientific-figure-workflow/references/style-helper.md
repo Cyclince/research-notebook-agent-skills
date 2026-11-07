@@ -27,11 +27,11 @@ with publication_style(font_family=FONT_FAMILY, font_size=FONT_SIZE):
     ax.set_xticks(np.arange(len(plot_data)), plot_data['group'])
     ax.set_ylabel('Estimate (replace with actual unit)')
     evidence = export_figure(fig, 'output/figures/estimate',
-                             formats=('pdf', 'svg', 'png'), dpi=DPI)
+                             format='png', dpi=DPI)
     plt.show()
 plt.close(fig)
 ```
 
 将 evidence、样式配置、输入哈希和图注一并写入项目图件清单；返回值中的 visual_check 保留 NOT-RUN，直到实际打开导出图检查。助手不会检查输入身份、有效样本、统计含义或空图；调用者按协议负责。确认字体安装不等于字形齐全，实际渲染缺字形仍会失败。
 
-精确尺寸模式保持整个 canvas，负责布局的调用者须在该尺寸内留足标签空间；`exact_size=False` 会紧裁切，其实际宽高可能变化。函数不关闭 Figure，方便 Notebook 显示；调用者显示后显式关闭。此工具仅支持 PDF/SVG/PNG，需要其他格式时保留显式的原生 savefig 代码。
+精确尺寸模式保持整个 canvas，负责布局的调用者须在该尺寸内留足标签空间；`exact_size=False` 会紧裁切，其实际宽高可能变化。函数不关闭 Figure，方便 Notebook 显示；调用者显示后显式关闭。此工具每次仅输出一种格式：png（默认）、tif 或 tiff。

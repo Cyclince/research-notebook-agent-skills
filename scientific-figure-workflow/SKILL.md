@@ -1,8 +1,8 @@
 ---
 name: scientific-figure-workflow
-description: 从保存的科研结果创建或改进可独立运行的 Notebook 论文图。用于图型选择、多面板布局、字体与配色调整、统计含义核查，以及可编辑 SVG/PDF 和高分辨率 PNG 导出；保留源数据和溯源信息，不重跑原科学模型。Use for publication figures and independent redraws from saved results.
+description: 从保存的科研结果创建或改进可独立运行的 Notebook 论文图。用于图型选择、多面板布局、字体与配色调整、统计含义核查，以及单一格式 PNG/TIFF 导出；保留源数据和溯源信息，不重跑原科学模型。Use for publication figures and independent redraws from saved results.
 metadata:
-  version: "1.4.0"
+  version: "1.5.0"
   language: "zh-CN"
 ---
 
@@ -12,7 +12,7 @@ metadata:
 
 ## 输入接入是执行前提
 
-先读取 [真实数据输入工作流](references/input-workflow.md)，完成输入发现、来源获取、路径/字段/单位配置、预检与数据预览，再执行算法。数据不可用时提供具体请求清单并标记 BLOCKED，不自动回退到模拟数据。明确是原论文复现、方法迁移还是输入示例；三个阶段的成果不能互相替代。
+按 [真实数据输入工作流](references/input-workflow.md) 核验现有输入及来源；缺失时标记 BLOCKED，不用模拟数据替代。仅重绘时核验已保存结果，不重复获取原始数据或运行算法。
 
 ## 执行流程
 
@@ -22,7 +22,7 @@ metadata:
 4. **设计最终版面**：读取 [排版与导出](references/publication-design.md)。先设毫米尺寸和缩印后字号，再安排面板与图例；共用坐标范围/色标须科学可比。颜色之外提供点形、线型或纹理，避免黑白打印失去区分。
 5. **显式独立绘图**：每图一个小节，包含可独立导入的绘图入口、结果读取和集中样式参数；核心绘图语句留在 Notebook。仅做所需轻量显示变换，不自动拟合或重跑模型。可选复制 [样式与导出助手](assets/publication_style.py) 到绘图目录；使用 [接入示例](references/style-helper.md)。它不负责数据处理或统计推断。
 6. **渲染、检查、修正**：实际运行每张交付图，打开导出的图检查文字、裁切、图例、样本数和误差定义。按最终版面尺寸看可读性；验证一次改变样式后的干净 Kernel 独立重绘。多轮修改不改变来源数据；未做的检查保留 NOT-RUN。
-7. **保存证据**：导出任务要求的格式，保留绘图输入、参数快照、来源/代码身份、图注及输出索引；明确何者是人工示意、何者是观测或估计。
+7. **保存证据**：每图只导出一种格式：默认 PNG，需要 TIFF 时改为 tif/tiff，不附带 PDF/SVG 或额外预览副本；，保留绘图输入、参数快照、来源/代码身份、图注及输出索引；明确何者是人工示意、何者是观测或估计。
 
 ## 必守边界
 
@@ -36,5 +36,9 @@ metadata:
 
 - [图件验收](references/plotting-acceptance.md)：逐图检查与记录项。
 - [图型与统计规则](references/chart-decisions.md)：柱/点、趋势、热图、散点和特殊图。
-- [排版与导出](references/publication-design.md)：物理尺寸、局部样式、共享图例、打印和矢量导出。
+- [排版与导出](references/publication-design.md)：物理尺寸、局部样式、共享图例、打印和单一格式导出。
 - [参考来源与取舍](references/source-notes.md)：figures4papers 的固定版本、借鉴范围及许可说明。
+
+## 避免重复工作
+
+同一任务中已有且输入、代码、参数、环境未变的检查证据直接复用；变化后只重做受影响的检查。多个图共享结果表和来源记录，不逐图复制相同数据。输出索引、参数和来源可合并为一份清单；不另写内容相同的总结、检查表或日志。最终回复只列关键结果、异常/未运行项与文件入口。

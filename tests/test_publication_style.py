@@ -4,7 +4,6 @@ import os
 from pathlib import Path
 import tempfile
 import unittest
-import xml.etree.ElementTree as ET
 
 os.environ.setdefault('MPLBACKEND', 'Agg')
 import matplotlib as mpl
@@ -45,13 +44,15 @@ class PublicationStyleTests(unittest.TestCase):
                     ax.set_xlabel('Time (s)')
                     ax.set_ylabel('Value')
                     ax.legend()
-                    result = style.export_figure(fig, Path(directory) / 'figure', formats=('png', 'svg', 'pdf'), dpi=100)
+                    result = style.export_figure(fig, Path(directory) / 'figure', dpi=100)
             with Image.open(Path(directory) / 'figure.png') as image:
                 self.assertEqual(image.size, (400, 300))
-            svg = ET.parse(Path(directory) / 'figure.svg').getroot()
-            self.assertEqual(svg.attrib['width'], '288pt')
-            self.assertTrue(svg.findall('.//{http://www.w3.org/2000/svg}text'))
-            self.assertTrue((Path(directory) / 'figure.pdf').read_bytes().startswith(b'%PDF'))
+            self.assertEqual([p.name for p in Path(directory).iterdir()], ['figure.png'])
+            for extension in ('tif', 'tiff'):
+                style.export_figure(fig, Path(directory) / 'figure', format=extension, dpi=100)
+                with Image.open(Path(directory) / f'figure.{extension}') as image:
+                    self.assertEqual(image.format, 'TIFF')
+                    self.assertEqual(image.size, (400, 300))
             self.assertEqual(result['visual_check'], 'NOT-RUN')
             self.assertTrue(plt.fignum_exists(fig.number))
 
@@ -64,8 +65,8 @@ class PublicationStyleTests(unittest.TestCase):
 
     def test_invalid_export_options_rejected(self):
         fig, _ = plt.subplots()
-        for formats in ((), ('png', 'png'), ('exe',)):
+        for format in ('pdf', 'svg', 'exe', ('png', 'tif')):
             with self.assertRaises(ValueError):
-                style.export_figure(fig, 'unused', formats=formats)
+                style.export_figure(fig, 'unused', format=format)
         with self.assertRaises(ValueError):
             style.export_figure(fig, 'unused', dpi=0)
