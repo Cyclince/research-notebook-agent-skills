@@ -40,12 +40,25 @@
 
 ## 安装
 
-安装技能只需复制目录，不需要 Python 依赖。把**完整的技能目录**放进客户端的 Skills 搜索路径：
+安装技能只需复制目录，不需要 Python 依赖。
+
+**1. 下载**（当前版本 v1.6.0）
+
+| 内容 | 下载 |
+| --- | --- |
+| 代码转 Notebook | [scientific-code-to-notebook-1.6.0.zip](https://github.com/Cyclince/research-notebook-agent-skills/releases/download/v1.6.0/scientific-code-to-notebook-1.6.0.zip) |
+| 论文绘图 | [scientific-figure-workflow-1.6.0.zip](https://github.com/Cyclince/research-notebook-agent-skills/releases/download/v1.6.0/scientific-figure-workflow-1.6.0.zip) |
+| 复现审计 | [scientific-reproducibility-audit-1.6.0.zip](https://github.com/Cyclince/research-notebook-agent-skills/releases/download/v1.6.0/scientific-reproducibility-audit-1.6.0.zip) |
+| 整套（含测试与维护脚本） | [research-notebook-agent-skills-1.6.0.zip](https://github.com/Cyclince/research-notebook-agent-skills/releases/download/v1.6.0/research-notebook-agent-skills-1.6.0.zip) |
+
+也可以克隆仓库：
 
 ```bash
 git clone https://github.com/Cyclince/research-notebook-agent-skills.git
 cd research-notebook-agent-skills
 ```
+
+**2. 复制**：把**完整的技能目录**放进客户端的 Skills 搜索路径。
 
 | 客户端 | 目标位置 |
 | --- | --- |
@@ -53,22 +66,25 @@ cd research-notebook-agent-skills
 | Claude Code（项目） | `你的项目/.claude/skills/` |
 | 支持 `.agents/skills/` 的客户端 | `你的项目/.agents/skills/` |
 
-例如安装全部三个到 Claude Code：
+例如在仓库或整套包的目录中，安装全部三个到 Claude Code：
 
 ```bash
 mkdir -p ~/.claude/skills && cp -R scientific-* ~/.claude/skills/
 ```
 
-也可以从 [Releases](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest) 下载单个技能或整套 ZIP，解压后复制完整技能目录。
+> [!NOTE]
+> 从 1.5.0 升级：先删除旧技能目录再复制，避免残留旧文件。旧版 `provenance.json` 与新绘图单元不兼容，需重新计算一次。其他变化见 [v1.6.0 发布说明](https://github.com/Cyclince/research-notebook-agent-skills/releases/tag/v1.6.0)。
 
 <details>
-<summary>校验 Release 下载文件</summary>
+<summary>校验下载文件（SHA-256）</summary>
+
+从 [v1.6.0](https://github.com/Cyclince/research-notebook-agent-skills/releases/tag/v1.6.0) 下载全部附件后运行：
 
 ```bash
 shasum -a 256 -c SHA256SUMS
 ```
 
-只下载一个包时，用 `shasum -a 256 文件名.zip` 与 `SHA256SUMS` 中对应条目核对。
+`RELEASE-MANIFEST.json` 记录源提交与压缩包哈希。只下载一个包时，用 `shasum -a 256 文件名.zip` 与 `SHA256SUMS` 中对应条目核对。
 
 </details>
 
@@ -204,6 +220,12 @@ python scripts/smoke_notebook_r.py   # 可选，需 R 及 jsonlite、digest
 ```
 
 GitHub Actions 在 Python 3.11 和 3.12 上运行包检查、单元测试和 Notebook 冒烟测试，并单独验证 R 模板。`requirements-optional.txt` 仅用于 NetCDF 测试。
+
+发布时先统一三个 `SKILL.md` 的版本号并提交，再生成附件：
+
+```bash
+python scripts/build_release.py --output-dir 新目录
+```
 
 `references/result-contract.md` 和 `references/input-workflow.md` 在三个技能中各有一份，修改时须同步。
 
