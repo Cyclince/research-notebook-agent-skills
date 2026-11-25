@@ -3,7 +3,7 @@ name: scientific-reproducibility-audit
 description: 审核科研代码重构或算法复现是否保持原论文方法、输入范围、计算参数、QC状态和数值结果。适用于 Python、R、MATLAB、Julia 及混合语言的科研模型、结构指标、数值仿真和数据分析；输出逐指标对照、失败原因、版本溯源及可重复运行检查。Use when verifying scientific methods and regression results before accepting refactored notebooks.
 
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   language: "zh-CN"
 ---
 

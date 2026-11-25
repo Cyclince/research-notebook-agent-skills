@@ -2,7 +2,7 @@
 name: scientific-figure-workflow
 description: 从保存的科研结果创建或改进可独立运行的 Notebook 论文图。用于图型选择、多面板布局、字体与配色调整、统计含义核查，以及单一格式导出（默认 PNG，可选 TIFF，按规范要求可用 PDF/SVG）；保留源数据和溯源信息，不重跑原科学模型。Use for publication figures and independent redraws from saved results.
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   language: "zh-CN"
 ---
 

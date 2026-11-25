@@ -59,7 +59,7 @@ cd research-notebook-agent-skills
 mkdir -p ~/.claude/skills && cp -R scientific-* ~/.claude/skills/
 ```
 
-也可以从 [Releases](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest) 下载 ZIP。本页描述 `main` 分支；**Release v1.5.0 不包含** R 模板、数组对照和本页的对照工具新选项，需要这些功能请用克隆方式安装。
+也可以从 [Releases](https://github.com/Cyclince/research-notebook-agent-skills/releases/latest) 下载单个技能或整套 ZIP，解压后复制完整技能目录。
 
 <details>
 <summary>校验 Release 下载文件</summary>

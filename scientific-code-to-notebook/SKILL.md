@@ -3,7 +3,7 @@ name: scientific-code-to-notebook
 description: 将难理解的既有科研代码、算法脚本和多模块分析工程重构为清晰、可交互、可维护的 Jupyter Notebook 科研流程。适用于 Python、R、MATLAB、Julia 或混合语言项目，需要保留原始方法与数值结果、独立算法分析单元、分离计算与绘图、支持科研复现和论文制图时使用。Use when refactoring existing scientific pipelines into readable, reproducible, researcher-editable notebooks.
 
 metadata:
-  version: "1.5.0"
+  version: "1.6.0"
   language: "zh-CN"
 ---
 
