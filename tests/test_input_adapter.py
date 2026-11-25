@@ -40,8 +40,9 @@ class InputAdapterTests(unittest.TestCase):
 
     def test_mapping_missing_tokens_and_string_ids(self):
         rows, evidence = self.load()
-        self.assertEqual(rows[0], {'sample_id': '001', 'group': 'A', 'value': '3'})
-        self.assertEqual(rows[1]['value'], '')
+        self.assertEqual(rows[0], {'sample_id': '001', 'sample_key': '{"id": "001"}', 'group': 'A',
+                                   'group_raw': 'A', 'value': '3', 'value_raw': '3'})
+        self.assertEqual((rows[1]['value'], rows[1]['value_raw']), ('', 'NA'))
         self.assertEqual(evidence['sha256'], adapter.digest(self.data))
 
     def test_missing_file_never_falls_back(self):
@@ -87,3 +88,62 @@ class InputAdapterTests(unittest.TestCase):
     def test_default_production_entry_is_blocked(self):
         with self.assertRaisesRegex(ValueError, 'BLOCKED'):
             adapter.load_input(ASSETS / 'input_config.json')
+
+    def test_repeated_measurements_use_joint_keys(self):
+        self.data.write_text('id,time,condition,length\n1,0,A,1\n1,1,A,2\n')
+        config = dict(self.config, sha256=adapter.digest(self.data), key_columns=['id', 'time'])
+        rows, evidence = self.load(config)
+        self.assertEqual([row['sample_id'] for row in rows], ['1', '1'])
+        self.assertEqual(rows[1]['sample_key'], '{"id": "1", "time": "1"}')
+        self.assertEqual((evidence['rows'], evidence['units_identified']), (2, 1))
+        with self.assertRaisesRegex(ValueError, 'configure key_columns'):
+            self.load(dict(config, key_columns=None))
+        self.data.write_text('id,time,condition,length\n1,0,A,1\n1,0,A,2\n')
+        with self.assertRaisesRegex(ValueError, 'duplicate'):
+            self.load(dict(config, sha256=adapter.digest(self.data)))
+        for keys in ([], ['time'], ['id', 'id'], ['id', 'length'], 'id'):
+            with self.assertRaisesRegex(ValueError, 'key_columns'):
+                self.load(dict(config, key_columns=keys))
+        with self.assertRaisesRegex(ValueError, 'mapped columns'):
+            self.load(dict(config, sha256=adapter.digest(self.data), key_columns=['id', 'absent']))
+
+    def test_all_configuration_gaps_reported_together(self):
+        with self.assertRaises(ValueError) as caught:
+            adapter.load_input(ASSETS / 'input_config.json')
+        for text in ('dataset_id', 'configure source', 'source_type', 'role', 'sha256', 'units.value', 'file missing'):
+            self.assertIn(text, str(caught.exception))
+
+    def test_unreadable_inputs_are_blocked(self):
+        self.data.write_bytes('id,condition,length\n1,对照,3\n'.encode('gbk'))
+        config = dict(self.config, sha256=adapter.digest(self.data), expected_rows=1)
+        with self.assertRaisesRegex(ValueError, 'BLOCKED: cannot decode'):
+            self.load(config)
+        self.assertEqual(self.load(dict(config, encoding='gb18030'))[0][0]['group'], '对照')
+        (self.root / 'config.json').write_text('{')
+        with self.assertRaisesRegex(ValueError, 'BLOCKED.*not valid JSON'):
+            adapter.load_input(self.root / 'config.json')
+
+    def test_records_do_not_expose_local_directories(self):
+        _, evidence = self.load()
+        self.assertEqual(evidence['path'], 'observations.csv')
+        nested = self.root / 'nested'
+        nested.mkdir()
+        (nested / 'config.json').write_text(json.dumps(dict(self.config, path=str(self.data))))
+        _, evidence = adapter.load_input(nested / 'config.json')
+        self.assertEqual(evidence['path'], '<external>/observations.csv')
+        self.assertNotIn(str(self.root), json.dumps(evidence))
+
+    def test_init_drafts_facts_but_still_blocks(self):
+        path = self.root / 'draft.json'
+        config = adapter.draft_config(self.data, path)
+        self.assertEqual((config['sha256'], config['expected_rows']), (adapter.digest(self.data), 2))
+        self.assertEqual((config['path'], config['available_columns']), ('observations.csv', ['id', 'condition', 'length']))
+        with self.assertRaisesRegex(ValueError, 'BLOCKED') as caught:
+            adapter.load_input(path)
+        for text in ('missing_values', 'role', 'source', 'units.value'):
+            self.assertIn(text, str(caught.exception))
+        with self.assertRaisesRegex(ValueError, 'already configured'):
+            adapter.draft_config(self.data, path)
+        template = self.root / 'input_config.json'
+        template.write_bytes((ASSETS / 'input_config.json').read_bytes())
+        adapter.draft_config(self.data, template)

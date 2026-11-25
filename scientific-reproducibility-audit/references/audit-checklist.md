@@ -12,7 +12,7 @@
 | 图表 | 是否真实读取保存数据、图例/单位/样本数正确、可单独重绘？ |
 | 环境 | Python/R/MATLAB/Julia 版本、关键依赖、硬件/平台、并行设置记录？ |
 
-记录格式、对齐规则和容差定义统一采用 [结果对齐与验收协议](result-contract.md)；使用 `../assets/validation_matrix_template.csv`。先核验完整键集合再比较；不能只挑匹配样本。标量 CSV 可使用 `../scripts/compare_csv.py`，随机算法须另设有依据的统计验收。
+记录格式、对齐规则和容差定义统一采用 [结果对齐与验收协议](result-contract.md)；使用 `../assets/validation_matrix_template.csv`。先核验完整键集合再比较；不能只挑匹配样本。标量 CSV 可使用 `../scripts/compare_csv.py`，npy/npz/NetCDF 可使用 `../scripts/compare_arrays.py`，随机算法须另设有依据的统计验收。
 
 ## 图件表现与结果一致性
 

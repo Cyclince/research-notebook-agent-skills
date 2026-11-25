@@ -4,13 +4,15 @@
 
 | 维度 | 检查内容 | 记录方式 |
 |---|---|---|
-| 数据 | 数据集版本/哈希、实际范围、样本层级、缺失定义、测量单位 | input_manifest.csv |
-| 入口 | CLI、脚本、Notebook、批任务、隐式全局变量 | entrypoint_map.md |
+| 数据 | 数据集版本/哈希、实际范围、样本层级、缺失定义、测量单位 | provenance.json（input） |
+| 入口 | CLI、脚本、Notebook、批任务、隐式全局变量 | Notebook 首节或 README |
 | 算法 | 名称、公式、来源、脚本路径/行号、所需数据、约束 | method_registry.csv |
-| 参数 | 默认值、合法区间、论文值/研究适配值 | config.yaml 与方法卡 |
-| 输出 | 图、表、中间缓存、固定顺序与字段定义；**标识符字段的变换规则**（后缀剥除/大小写/命名映射）逐字段登记 | output_map.md |
+| 参数 | 默认值、合法区间、论文值/研究适配值 | provenance.json（scientific_parameters）与 method_registry.csv |
+| 输出 | 图、表、中间缓存、固定顺序与字段定义；**标识符字段的变换规则**（后缀剥除/大小写/命名映射）逐字段登记 | validation_matrix.csv（structure/field 行） |
 | 测试 | 文献基准、作者代码输出、已有回归值、QC 缺失 | validation_matrix.csv |
-| 环境 | 语言、依赖包版本、编译器/BLAS、OS、seed | environment manifest |
+| 环境 | 语言、依赖包版本、编译器/BLAS、OS、seed | provenance.json（environment） |
+
+上表是检查范围，不是文件清单：合并到 `provenance.json`、`method_registry.csv` 和 `validation_matrix.csv`，已有等价记录时直接引用。
 
 ## 改造前顺序
 

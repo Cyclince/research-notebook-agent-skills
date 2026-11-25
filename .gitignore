@@ -6,6 +6,7 @@ __pycache__/
 .venv/
 venv/
 example_output/
+example_output_r/
 qa-output/
 .pytest_cache/
 .env

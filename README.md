@@ -18,7 +18,7 @@
 
 ## 让科研流程更容易理解与复现
 
-从分散的算法脚本到可编辑的 Notebook，这套技能帮助你接通真实数据、展开关键计算、独立调整论文图，并对照原输出核验结果。支持 Python、R、MATLAB、Julia 及混合语言项目，运行时使用对应环境。
+从分散的算法脚本到可编辑的 Notebook，这套技能帮助你接通真实数据、展开关键计算、独立调整论文图，并对照原输出核验结果。流程约定适用于 Python、R、MATLAB、Julia 及混合语言项目，运行时使用对应环境；随附模板与工具的覆盖范围见[支持范围](#支持范围)。
 
 **真实输入 → 可读计算 → 独立绘图 → 结果核验**
 
@@ -27,10 +27,19 @@
 | 技能 | 适用场景 | 交付结果 |
 | --- | --- | --- |
 | [代码转 Notebook](./scientific-code-to-notebook/SKILL.md) | 既有科研代码难读、难改 | 显式计算步骤、真实输入配置和可独立运行的 Notebook |
-| [论文绘图](./scientific-figure-workflow/SKILL.md) | 已有结果，需要论文绘图或调整版式 | 可编辑绘图代码、单一 PNG/TIFF 图件与来源记录 |
+| [论文绘图](./scientific-figure-workflow/SKILL.md) | 已有结果，需要论文绘图或调整版式 | 可编辑绘图代码、单一格式图件与来源记录 |
 | [复现审计](./scientific-reproducibility-audit/SKILL.md) | 需要确认重构或复现是否改变结果 | 按字段对齐的验收表、差异解释与未验证项 |
 
 三个技能按任务选用，也可以串联完成从代码整理到结果核验的流程。
+
+## 支持范围
+
+| 能力 | 已提供 | 未提供（按约定自建或另行核验） |
+| --- | --- | --- |
+| Notebook 模板 | Python、R | MATLAB、Julia |
+| 输入适配器 | CSV/TSV，支持联合主键与重复测量 | 数组、影像、数据库 |
+| 结果对照 | 标量 CSV、npy/npz、NetCDF | HDF5、MAT、影像、随机等效性 |
+| 图件助手 | Matplotlib | ggplot2 等其他绘图库 |
 
 ## 快速开始
 
@@ -93,12 +102,13 @@ shasum -a 256 -c SHA256SUMS
 
 ## 运行真实数据示例
 
-仓库提供两个 Notebook 入口：
+仓库提供三个 Notebook 入口：
 
 | 入口 | 用途 |
 | --- | --- |
 | [real_data_example.ipynb](./scientific-code-to-notebook/assets/real_data_example.ipynb) | 使用随包提供的 Palmer Penguins 真实观测数据，体验输入、QC、统计与独立重绘 |
 | [notebook_template.ipynb](./scientific-code-to-notebook/assets/notebook_template.ipynb) | 接入自己的论文或项目数据，再替换为目标算法 |
+| [notebook_template_r.ipynb](./scientific-code-to-notebook/assets/notebook_template_r.ipynb) | R 版入口，共用同一配置与输出结构，需 IRkernel |
 
 <details>
 <summary>展开示例运行步骤 · Python 3.11+</summary>
@@ -117,18 +127,18 @@ Windows 使用 `.venv\Scripts\activate`。在支持 Jupyter 的编辑器中选�
 
 示例从 344 条观测中识别出 342 条有效喙长记录，展示分组统计和绘图；数据来源、固定版本与 CC0 许可见 [数据说明](./scientific-code-to-notebook/assets/data/SOURCE.md)。它用于演示真实输入接入，不代表目标论文算法已被复现。
 
-接入自己的数据时，编辑 [input_config.json](./scientific-code-to-notebook/assets/input_config.json)，填写实际路径、来源、哈希、字段映射、单位和缺失规则，再运行模板。表格示例适配器支持 CSV/TSV；数组、影像和时空数据使用对应读取器，详见 [输入工作流](./scientific-code-to-notebook/references/input-workflow.md)。
+接入自己的数据时，在 assets 目录用 `python input_adapter.py --init 数据.csv --config input_config.json` 生成草稿，再编辑 [input_config.json](./scientific-code-to-notebook/assets/input_config.json)，填写实际路径、来源、哈希、字段映射、单位和缺失规则，再运行模板。表格示例适配器支持 CSV/TSV；数组、影像和时空数据使用对应读取器，详见 [输入工作流](./scientific-code-to-notebook/references/input-workflow.md)。
 
 ## 输出保持精简，证据保留完整
 
-- **图片**：每图只输出一种格式，默认 PNG，可改为 TIFF；绘图代码保留可编辑参数。
+- **图片**：每图只输出一种格式，默认 PNG，可改为 TIFF（RGB + LZW）；目标规范要求矢量图时可用 PDF/SVG。
 - **计算**：读取保存结果独立重绘，调整样式无需重跑模型；输入、代码或科学参数变化会拦截不匹配缓存。
-- **记录**：共用结果表与来源信息，复用仍有效的检查证据，报告聚焦差异、阻断项和未运行项。
+- **记录**：一份 `provenance.json` 与一份 `validation_matrix.csv`，状态来自实际判断；共用结果表与来源信息，复用仍有效的检查证据，报告聚焦差异、阻断项和未运行项。
 
 > [!NOTE]
 > 缺少真实输入时会报告 `BLOCKED`，不会自动以模拟数据替代。公开数据示例跑通不代表原论文算法复现通过。
 
-详细约定见 [结果验收协议](./scientific-reproducibility-audit/references/result-contract.md)；CSV 对照工具见 [审计技能](./scientific-reproducibility-audit/SKILL.md#标量-csv-对照工具)。
+详细约定见 [结果验收协议](./scientific-reproducibility-audit/references/result-contract.md)；CSV 对照工具见 [审计技能](./scientific-reproducibility-audit/SKILL.md#标量-csv-对照工具)，数组对照见[数组工具](./scientific-reproducibility-audit/SKILL.md#数组对照工具)。
 
 ## 本地验证
 
@@ -141,9 +151,10 @@ Windows 使用 `.venv\Scripts\activate`。在支持 Jupyter 的编辑器中选�
 python scripts/check_package.py
 python -m unittest discover -s tests -v
 python scripts/smoke_notebook.py
+python scripts/smoke_notebook_r.py   # 可选，需 R 及 jsonlite、digest
 ```
 
-检查覆盖技能结构、数据接入、结果对照、PNG/TIFF 导出、Notebook 完整执行、独立重绘与缓存失效。GitHub Actions 在 Python 3.11 和 3.12 上运行这些检查；真实项目仍需核验方法依据、科学结果与实际图件。
+NetCDF 测试另需 `pip install -r requirements-optional.txt`，未安装时跳过。检查覆盖技能结构、数据接入、结果对照、图件导出、Notebook 完整执行、独立重绘、执行代码核对与缓存失效。GitHub Actions 在 Python 3.11 和 3.12 上运行这些检查；真实项目仍需核验方法依据、科学结果与实际图件。
 
 需要保留示例输出供查看时，使用 `python scripts/smoke_notebook.py --output-dir /tmp/research-notebook-qa`，输出目录须尚不存在。
 

@@ -14,9 +14,10 @@ RESULT_CSV = Path('output/summary.csv')
 WIDTH_MM, HEIGHT_MM = 85, 65  # 试稿尺寸，替换为目标规范
 FONT_FAMILY, FONT_SIZE, DPI = 'DejaVu Sans', 9, 300
 SERIES_COLOR = '#4477AA'  # 用户可改；不是统计优劣编码
-plot_data = pd.read_csv(RESULT_CSV)
-assert len(plot_data) > 0
-assert np.isfinite(plot_data['estimate']).all()
+plot_data = pd.read_csv(RESULT_CSV, dtype=str, keep_default_na=False)
+plot_data['estimate'] = plot_data['estimate'].replace('', 'nan').astype(float)
+if not len(plot_data) or not np.isfinite(plot_data['estimate']).all():
+    raise RuntimeError('No valid estimates to plot')
 
 with publication_style(font_family=FONT_FAMILY, font_size=FONT_SIZE):
     fig, ax = plt.subplots(figsize=figure_size_mm(WIDTH_MM, HEIGHT_MM),
@@ -32,6 +33,6 @@ with publication_style(font_family=FONT_FAMILY, font_size=FONT_SIZE):
 plt.close(fig)
 ```
 
-将 evidence、样式配置、输入哈希和图注一并写入项目图件清单；返回值中的 visual_check 保留 NOT-RUN，直到实际打开导出图检查。助手不会检查输入身份、有效样本、统计含义或空图；调用者按协议负责。确认字体安装不等于字形齐全，实际渲染缺字形仍会失败。
+将 evidence、样式配置、输入哈希和图注一并写入 provenance.json 的 figures 部分，checks 写入验收表；返回值中的 visual_check 保留 NOT-RUN，直到实际打开导出图检查。助手会拒绝无有效数据的面板、缺字形和超出画布的内容，失败时不写文件；不检查输入身份、样本、统计含义、文字重叠，也不判断数据是否落在坐标范围内。确有需要时用 allow_empty_axes / allow_overflow 放行并说明依据，对应项记 PASS-WITH-DIFF；调用者按协议负责。确认字体安装不等于字形齐全，实际渲染缺字形仍会失败。
 
-精确尺寸模式保持整个 canvas，负责布局的调用者须在该尺寸内留足标签空间；`exact_size=False` 会紧裁切，其实际宽高可能变化。函数不关闭 Figure，方便 Notebook 显示；调用者显示后显式关闭。此工具每次仅输出一种格式：png（默认）、tif 或 tiff。
+精确尺寸模式保持整个 canvas，负责布局的调用者须在该尺寸内留足标签空间；`exact_size=False` 会紧裁切，其实际宽高可能变化。函数不关闭 Figure，方便 Notebook 显示；调用者显示后显式关闭。此工具每次仅输出一种格式：png（默认）、tif/tiff（RGB + LZW），或规范明确要求时的 pdf/svg。

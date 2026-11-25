@@ -39,7 +39,8 @@ for path in ROOT.rglob("*.ipynb"):
     nbformat.validate(notebook)
     for cell in notebook.cells:
         if cell.cell_type == "code":
-            ast.parse(cell.source)
+            if notebook.metadata.kernelspec.language == "python":
+                ast.parse(cell.source)
             assert not cell.outputs and cell.execution_count is None, "Commit clean templates only"
 for path in ROOT.rglob("*.py"):
     ast.parse(path.read_text(encoding="utf-8"))

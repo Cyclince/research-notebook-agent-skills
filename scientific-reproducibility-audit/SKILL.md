@@ -15,7 +15,7 @@ metadata:
 
 ## 输入接入是执行前提
 
-按 [真实数据输入工作流](references/input-workflow.md) 核验现有输入及来源；缺失时标记 BLOCKED，不用模拟数据替代。仅重绘时核验已保存结果，不重复获取原始数据或运行算法。
+按 [真实数据输入工作流](references/input-workflow.md) 核验现有输入及来源；缺失时标记 BLOCKED，不用模拟数据替代。
 
 ## 操作顺序
 
@@ -48,13 +48,23 @@ metadata:
 
 ## 标量 CSV 对照工具
 
-需要比较按样本保存的标量 CSV 时使用标准库脚本；运行前 `python scripts/compare_csv.py --help`。例如在本技能目录执行：
+按样本保存的标量 CSV 用标准库脚本比较；运行前看 `python scripts/compare_csv.py --help`。在本技能目录执行：
 
 ```bash
-python scripts/compare_csv.py old.csv new.csv --keys sample_id --numeric estimate --qc status --atol 1e-8 --rtol 1e-6 --dataset-id dataset-v1 --method method-a --source-code-version OLD_COMMIT --refactor-code-version NEW_COMMIT --output validation_matrix.csv
+python scripts/compare_csv.py old.csv new.csv --keys sample_id time --tol estimate=1e-8,1e-6 area=0.1,0 --qc status --missing-values NA --dataset-id dataset-v1 --method method-a --source-code-version OLD_COMMIT --refactor-code-version NEW_COMMIT --output validation_matrix.csv --append
 ```
 
-脚本按字符串主键对齐，逐字段检查，输出统一 schema；退出码 0 表示所执行的表格检查通过，1 表示 FAIL，2 表示输入不可读取或调用条件阻断。数值列需显式指定，未指定列按原字符串比较；空字符串和 NaN 为数值缺失，Inf 为 FAIL。不同容差的指标分别运行并保存独立报告。缺失字段/键、重复键、空表不会通过。它不验证数据同源、单位、论文方法或随机等效性，也不自动生成 PASS-WITH-DIFF；完整审计仍须履行上述流程。
+- **容差**：`--tol 列=atol,rtol` 逐列指定，一次运行完成；`--numeric` 列使用 `--atol/--rtol` 默认值。未指定的列按原字符串比较。
+- **缺失**：空值与 NaN 为缺失；NA 等须用 `--missing-values` 声明，只作用于数值列。Inf 与非常规数字写法（如 1_000）为 FAIL。
+- **读取**：默认 UTF-8 逗号分隔；其他用 `--encoding gb18030`、`--delimiter tab`。
+- **报告**：默认每字段一行汇总加全部未通过行，`--full` 输出逐条；已有文件须选 `--append` 或 `--overwrite`，同一内容重复追加前先删旧行。
+- **退出码**：0 表格检查通过，1 为 FAIL，2 为不可读取或调用条件阻断（BLOCKED）。缺失字段/键、重复键、空表不会通过。
+
+脚本不验证数据同源、单位、论文方法或随机等效性，也不自动生成 PASS-WITH-DIFF；完整审计仍须履行上述流程。
+
+## 数组对照工具
+
+`.npy`、`.npz`、NetCDF 用 `python scripts/compare_arrays.py old.nc new.nc --tol temperature=1e-6,0 --output validation_matrix.csv --append`（需 numpy，NetCDF 另需 netCDF4）。逐变量检查形状、类型、维度、单位等属性、缺失掩码与数值，报告最大差值位置；不广播、转置或重采样，不读取 pickle 对象。HDF5、MAT、影像等暂不支持，返回 BLOCKED，须用对应读取器另行核验。
 
 ## 避免重复工作
 

@@ -7,25 +7,26 @@
 1. 比较前冻结数据清单、代码版本、科学参数、筛选范围、单位和预期样本集。不能证明同源时标记 BLOCKED，不以数值接近推断同源。
 2. 明确联合主键（如 sample_id + time + method）；读取标识符为字符串以保留前导零。键不得为空、不得重复。禁止未经说明地按行号对齐、去重、取交集或修改大小写。
 3. 检查新旧键集合、字段集合、字段角色及类型约定。缺行、多行、缺字段、标识符转换差异均单独记录；行顺序变化本身不是差异。长宽表转换须先登记可逆映射。
-4. 按键逐字段比较。数值字段明确指定；类别、标识符及 QC 默认精确匹配。单位换算、时间精度、缺失标记标准化必须有方法依据，并保留转换前证据。
-5. 先核对缺失掩码和 QC，再比较有限数值。NaN 不转零；Inf、不收敛和无定义值按原方法规则记录，不能让比较库默认忽略。
+4. 缺失标记须显式声明：除空值与 NaN 外，R 的 NA、哨兵值等由执行者声明并写入判据，只用于数值列，不自动识别。
+5. 按键逐字段比较。数值字段明确指定；类别、标识符及 QC 默认精确匹配。单位换算、时间精度、缺失标记标准化必须有方法依据，并保留转换前证据。
+6. 先核对缺失掩码和 QC，再比较有限数值。NaN 不转零；Inf、不收敛和无定义值按原方法规则记录，不能让比较库默认忽略。
 
 ## 容差与统计边界
 
 - 运行前记录每个指标的 atol、rtol、量纲、判据及依据。常见标量判据为 `abs_diff <= atol + rtol * abs(old_value)`；旧值为零时相对误差留空，使用绝对容差。
-- 不同量纲或精度的字段分开配置。容差不是根据本次观察到的误差反推。无法确定时报告待核验，不能默认宽松通过。
+- 不同量纲或精度的字段逐列配置容差，在同一次对照、同一份验收表中完成。容差不是根据本次观察到的误差反推。无法确定时报告待核验，不能默认宽松通过。
 - 随机算法预先记录重复次数、RNG、seed、统计量及分布比较/等效性判据；同 seed 不保证跨版本或平台逐值相同。不以“未显著不同”证明等效。
 - 原实现有科学性疑点时，分别报告“与旧实现一致”和“与方法定义一致”；重构一致性不等于科学正确性。
 
 ## validation_matrix.csv
 
-统一列顺序：
+一个任务只维护一份 `validation_matrix.csv`：输入、执行、数值、图件检查追加或更新到同一文件，不另建同义检查表。数值对照可每字段记一行汇总（数量、失败数、最大差值）并保留全部未通过行；需要逐条证据时再输出全量。统一列顺序：
 
 ```text
 schema_version,dataset_id,source_code_version,refactor_code_version,method,check_type,sample_key,metric,old_value,new_value,abs_diff,rel_diff,atol,rtol,comparison_rule,qc_before,qc_after,status,notes
 ```
 
-`schema_version` 固定为 `1.0`。`check_type` 使用 structure / field / numeric / qc / figure / execution / provenance；`sample_key` 为联合键的 JSON 对象或有说明的稳定编码。数组比较需在 notes 引用数组文件/索引与判据，不把数组硬塞为一个标量。无法计算的数值字段留空，不能填 0。图件与执行检查可不填 old_value/new_value，但必须有判据和证据路径。版本、数据集与方法不明时如实记录 unknown 及缺口，最终报告不能称为完整验收通过。
+`schema_version` 固定为 `1.0`。`check_type` 使用 structure / field / numeric / qc / figure / execution / provenance；`metric` 可带 input: 等前缀说明阶段；状态只能来自实际判断，检查代码用显式异常而非 assert（`python -O` 会移除 assert）；检查中断时其余必需项写 NOT-RUN，不保留旧 PASS。`sample_key` 为联合键的 JSON 对象或有说明的稳定编码。数组比较需在 notes 引用数组文件/索引与判据，不把数组硬塞为一个标量。无法计算的数值字段留空，不能填 0。图件与执行检查可不填 old_value/new_value，但必须有判据和证据路径。版本、数据集与方法不明时如实记录 unknown 及缺口，最终报告不能称为完整验收通过。
 
 | 状态 | 定义 |
 |---|---|
@@ -40,14 +41,14 @@ schema_version,dataset_id,source_code_version,refactor_code_version,method,check
 
 ## 缓存和独立绘图
 
-结果旁保存 provenance JSON：输入文件路径及 SHA-256、科学参数、代码/Notebook 哈希或 commit、软件环境、结果文件哈希和生成时间。大型输入可用可信上游清单，但必须记录清单来源与验证范围。缓存键覆盖科学输入、科学参数及相关代码版本；样式不应改变计算缓存键。
+结果旁保存一份 `provenance.json`，`calculation` 与 `figures` 两部分共用；路径写相对路径，不写本机目录。内容包括输入文件路径及 SHA-256、科学参数、代码/Notebook 哈希或 commit、软件环境、结果文件哈希和生成时间。代码身份覆盖全部计算单元（未标记即视为计算）及导入的本地模块，并确认实际执行的代码与已保存文件一致；无法确认时 execution:source-match 记 NOT-RUN。大型输入可用可信上游清单，但必须记录清单来源与验证范围。缓存键覆盖科学输入、科学参数及相关代码版本；样式不应改变计算缓存键。
 
-只绘图运行必须校验结果哈希，并检查当前可获得的输入、科学参数和代码版本。身份变化时停止并要求显式重算；不能自动触发昂贵计算。若只有归档结果，可验证结果完整性并展示历史来源，但明确没有重新验证原始输入。文件存在不代表缓存有效。
+只绘图运行必须校验结果哈希，并检查当前可获得的输入、科学参数和代码版本。身份变化时停止并要求显式重算；不能自动触发昂贵计算。若只有归档结果，可验证结果完整性并展示历史来源，但明确没有重新验证原始输入，input:identity 记 BLOCKED。文件存在不代表缓存有效。
 
 ## 每幅图的必需检查
 
 - 过滤后存在有效绘图数据；表有行不等于有有限可绘制值。已知预期样本/组数时核对，并记录 QC 排除数。
 - 单独在干净 Kernel 执行绘图入口，无计算阶段内存依赖；从结果文件重绘，不隐含拟合或重新建模。
 - 捕获实际渲染/保存阶段的缺字形警告；缺字形或空图为 FAIL。字体不可用时说明环境缺口，不靠屏蔽警告通过。
-- 打开输出图检查标签、裁切、单位、n 与误差定义。每图只输出 PNG 或 TIFF 中一种，默认 PNG；可编辑性由绘图代码保留。
-- 保存绘图数据、样式参数、来源及输出索引；对应记录 figure:nonempty、figure:valid-values、figure:no-glyph-warning、figure:data-rows 和 figure:visual-check。视觉检查未做则 NOT-RUN。
+- 打开输出图检查标签、裁切、单位、n 与误差定义。每图只输出一种格式，默认 PNG，可改 TIFF（RGB + LZW）；仅当用户或目标规范明确要求矢量图时改为 PDF/SVG。可编辑性由绘图代码保留。
+- 保存绘图数据、样式参数、来源及输出索引；对应记录 figure:nonempty、figure:valid-values、figure:no-glyph-warning、figure:data-rows、figure:within-canvas 和 figure:visual-check。绘图设备无法判断的项记 NOT-RUN。视觉检查未做则 NOT-RUN。

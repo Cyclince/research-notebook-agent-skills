@@ -2,8 +2,8 @@
   "dataset_id": "YOUR_DATASET_VERSION",
   "path": "data/raw/measurements.csv",
   "source": "",
-  "source_type": "user_data",
-  "role": "paper_reproduction",
+  "source_type": "",
+  "role": "",
   "paper_reference": "",
   "sha256": "",
   "expected_rows": null,
@@ -12,6 +12,7 @@
     "group": "group",
     "value": "value"
   },
+  "key_columns": null,
   "units": {
     "value": ""
   },

@@ -11,7 +11,7 @@ project/
 │   ├── 02_method_b.ipynb
 │   └── 90_comparison.ipynb
 ├── src/                     # 仅必要的共享 I/O / 缓存 / 专业外部内核
-├── references/              # 方法卡、论文及来源清单
+├── references/              # method_registry.csv、论文及来源
 ├── tests/
 ├── output/
 │   ├── preprocessing/
